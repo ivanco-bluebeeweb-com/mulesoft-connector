@@ -1,0 +1,4205 @@
+{
+  "manifest_schema_version": 3,
+  "sdk_version": "5.9.19",
+  "app_id": "mulesoft-connector",
+  "version": "0.1.0",
+  "name": "MuleSoft",
+  "description": "Connect your own MuleSoft Anypoint Platform organization to see and manage your CloudHub Mule applications from Imperal -- list applications with their status, start/stop/restart/delete them, update their worker/runtime configuration, read their logs, manage alerts and schedules, browse your API Manager registry, and run bulk operations and environment audits across many applications at once. Uses your own Anypoint Connected App (OAuth2 client credentials) -- nothing is hosted or proxied by Imperal beyond the request itself. Note: this manages CloudHub applications and API Manager instances only; Design Center API specification projects and deep network infrastructure (VPC/VPN/ load balancers) are out of scope.",
+  "icon": "icon.svg",
+  "actions_explicit": true,
+  "system": false,
+  "capabilities": [
+    "mulesoft:read",
+    "mulesoft:write"
+  ],
+  "tools": [
+    {
+      "name": "connect_mulesoft",
+      "description": "Connect your Anypoint Platform organization by saving your Connected App's client_id/client_secret plus your organization ID and a default environment ID, after checking they actually work together. You'll need: a Connected App (Anypoint Platform > Access Management > Connected Apps > create one as \"App as Owner\" for machine-to-machine access) granted the permissions you want to use (e.g. \"Manage Applications\" for CloudHub). Note: this manages CloudHub Mule applications and API Manager instances -- Design Center specs and Access Management users/roles are out of scope here.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.provider.connected"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "client_id": {
+            "default": "",
+            "description": "Client ID of the Anypoint Platform Connected App created for this connection.",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "client_secret": {
+            "default": "",
+            "description": "Client secret of the Anypoint Platform Connected App.",
+            "title": "Client Secret",
+            "type": "string"
+          },
+          "org_id": {
+            "default": "",
+            "description": "Your Anypoint Platform organization ID (a GUID), found in Access Management > organization details.",
+            "title": "Org Id",
+            "type": "string"
+          },
+          "environment_id": {
+            "default": "",
+            "description": "Default Anypoint environment ID (a GUID) to operate in, e.g. your Production or Sandbox environment. Found in Access Management > Environments.",
+            "title": "Environment Id",
+            "type": "string"
+          },
+          "label": {
+            "default": "",
+            "description": "Optional friendly name for this organization/environment connection.",
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "title": "ConnectMulesoftParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "connected": {
+            "default": false,
+            "title": "Connected",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          },
+          "org_id": {
+            "default": "",
+            "title": "Org Id",
+            "type": "string"
+          },
+          "environment_id": {
+            "default": "",
+            "title": "Environment Id",
+            "type": "string"
+          }
+        },
+        "title": "ProviderConnection",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.connect_mulesoft",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "disconnect_mulesoft",
+      "description": "Disconnect one Anypoint Platform organization/environment. Nothing in Anypoint Platform is changed; the saved Connected App credentials are deleted here.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.provider.disconnected"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "description": "Connection id to disconnect, from list_connections.",
+            "title": "Connection Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "connection_id"
+        ],
+        "title": "DisconnectMulesoftParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "title": "DeleteResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.disconnect_mulesoft",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "list_connections",
+      "description": "List the connected Anypoint Platform organizations/environments.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "description": "Explicit empty params model -- V17 disallows untyped handlers.",
+        "properties": {},
+        "title": "NoParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "ProviderConnection": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "connected": {
+                "default": false,
+                "title": "Connected",
+                "type": "boolean"
+              },
+              "detail": {
+                "default": "",
+                "title": "Detail",
+                "type": "string"
+              },
+              "org_id": {
+                "default": "",
+                "title": "Org Id",
+                "type": "string"
+              },
+              "environment_id": {
+                "default": "",
+                "title": "Environment Id",
+                "type": "string"
+              }
+            },
+            "title": "ProviderConnection",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "provider_connection_list",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/ProviderConnection"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "title": "ProviderConnectionList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.list_connections",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "list_cloudhub_applications",
+      "description": "List CloudHub Mule applications in the connected organization/environment, with their status (STARTED/UNDEPLOYED/etc.).",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "search": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional domain/name substring filter.",
+            "title": "Search"
+          }
+        },
+        "title": "ListCloudhubApplicationsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "CloudhubApplication": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "default": "",
+                "title": "Status",
+                "type": "string"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "workers": {
+                "default": 0,
+                "title": "Workers",
+                "type": "integer"
+              },
+              "worker_type": {
+                "default": "",
+                "title": "Worker Type",
+                "type": "string"
+              },
+              "mule_version": {
+                "default": "",
+                "title": "Mule Version",
+                "type": "string"
+              },
+              "latest_mule_version": {
+                "default": "",
+                "title": "Latest Mule Version",
+                "type": "string"
+              },
+              "region": {
+                "default": "",
+                "title": "Region",
+                "type": "string"
+              },
+              "last_update_time": {
+                "default": "",
+                "title": "Last Update Time",
+                "type": "string"
+              }
+            },
+            "title": "CloudhubApplication",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "cloudhub_application_list",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/CloudhubApplication"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "title": "CloudhubApplicationList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.list_cloudhub_applications",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "get_cloudhub_application",
+      "description": "Read one CloudHub Mule application in full -- status, workers, Mule runtime version, region.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain (its unique identifier).",
+            "title": "Domain",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "title": "GetCloudhubApplicationParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "domain": {
+            "default": "",
+            "title": "Domain",
+            "type": "string"
+          },
+          "workers": {
+            "default": 0,
+            "title": "Workers",
+            "type": "integer"
+          },
+          "worker_type": {
+            "default": "",
+            "title": "Worker Type",
+            "type": "string"
+          },
+          "mule_version": {
+            "default": "",
+            "title": "Mule Version",
+            "type": "string"
+          },
+          "latest_mule_version": {
+            "default": "",
+            "title": "Latest Mule Version",
+            "type": "string"
+          },
+          "region": {
+            "default": "",
+            "title": "Region",
+            "type": "string"
+          },
+          "last_update_time": {
+            "default": "",
+            "title": "Last Update Time",
+            "type": "string"
+          }
+        },
+        "title": "CloudhubApplication",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.get_cloudhub_application",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "start_cloudhub_application",
+      "description": "Start a stopped CloudHub Mule application.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.application.started"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain to act on.",
+            "title": "Domain",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "title": "StartStopRestartParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "title": "CloudhubActionResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.start_cloudhub_application",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "stop_cloudhub_application",
+      "description": "Stop a running CloudHub Mule application.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.application.stopped"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain to act on.",
+            "title": "Domain",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "title": "StartStopRestartParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "title": "CloudhubActionResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.stop_cloudhub_application",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "restart_cloudhub_application",
+      "description": "Restart a CloudHub Mule application.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.application.restarted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain to act on.",
+            "title": "Domain",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "title": "StartStopRestartParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "title": "CloudhubActionResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.restart_cloudhub_application",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "update_cloudhub_application",
+      "description": "Update a CloudHub Mule application's workers, worker size, or application properties.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.application.updated"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain to update.",
+            "title": "Domain",
+            "type": "string"
+          },
+          "workers": {
+            "anyOf": [
+              {
+                "maximum": 8,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "New number of workers.",
+            "title": "Workers"
+          },
+          "worker_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "New worker size, e.g. 'MICRO', 'SMALL', 'MEDIUM', 'LARGE'.",
+            "title": "Worker Type"
+          },
+          "properties": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "New/replaced application (system) properties as key/value pairs.",
+            "title": "Properties"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "title": "UpdateCloudhubApplicationParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "title": "CloudhubActionResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.update_cloudhub_application",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "delete_cloudhub_application",
+      "description": "Permanently delete (undeploy) a CloudHub Mule application. Cannot be undone.",
+      "action_type": "destructive",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.application.deleted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain to permanently delete.",
+            "title": "Domain",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "title": "DeleteCloudhubApplicationParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "title": "DeleteResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.delete_cloudhub_application",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "get_cloudhub_application_logs",
+      "description": "Read recent log lines for a CloudHub Mule application.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain whose logs to read.",
+            "title": "Domain",
+            "type": "string"
+          },
+          "limit": {
+            "default": 100,
+            "description": "Max log lines to return.",
+            "maximum": 1000,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "title": "GetCloudhubApplicationLogsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "CloudhubLogEntry": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "timestamp": {
+                "default": "",
+                "title": "Timestamp",
+                "type": "string"
+              },
+              "priority": {
+                "default": "",
+                "title": "Priority",
+                "type": "string"
+              },
+              "message": {
+                "default": "",
+                "title": "Message",
+                "type": "string"
+              }
+            },
+            "title": "CloudhubLogEntry",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "cloudhub_log_list",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/CloudhubLogEntry"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "title": "CloudhubLogList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.get_cloudhub_application_logs",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "list_cloudhub_alerts",
+      "description": "List alerts configured on a CloudHub Mule application.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain whose alerts to list.",
+            "title": "Domain",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "title": "ListCloudhubAlertsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "CloudhubAlert": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "enabled": {
+                "default": true,
+                "title": "Enabled",
+                "type": "boolean"
+              },
+              "watch": {
+                "default": "",
+                "title": "Watch",
+                "type": "string"
+              },
+              "condition": {
+                "default": "",
+                "title": "Condition",
+                "type": "string"
+              }
+            },
+            "title": "CloudhubAlert",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "cloudhub_alert_list",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/CloudhubAlert"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "title": "CloudhubAlertList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.list_cloudhub_alerts",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "create_cloudhub_alert",
+      "description": "Create a new alert watching a CloudHub Mule application (e.g. notify on application status changes or restarts).",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.alert.created"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain this alert watches.",
+            "title": "Domain",
+            "type": "string"
+          },
+          "name": {
+            "description": "Display name for the alert.",
+            "title": "Name",
+            "type": "string"
+          },
+          "watch": {
+            "description": "What to watch, e.g. 'APPLICATION_STATUS', 'APPLICATION_RESTART'.",
+            "title": "Watch",
+            "type": "string"
+          },
+          "enabled": {
+            "default": true,
+            "description": "Whether the alert is active immediately.",
+            "title": "Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "domain",
+          "name",
+          "watch"
+        ],
+        "title": "CreateCloudhubAlertParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "domain": {
+            "default": "",
+            "title": "Domain",
+            "type": "string"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "watch": {
+            "default": "",
+            "title": "Watch",
+            "type": "string"
+          },
+          "condition": {
+            "default": "",
+            "title": "Condition",
+            "type": "string"
+          }
+        },
+        "title": "CloudhubAlert",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.create_cloudhub_alert",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "delete_cloudhub_alert",
+      "description": "Permanently delete a CloudHub application alert. Cannot be undone.",
+      "action_type": "destructive",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.alert.deleted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "alert_id": {
+            "description": "Alert id to permanently delete, from list_cloudhub_alerts.",
+            "title": "Alert Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "alert_id"
+        ],
+        "title": "DeleteCloudhubAlertParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "title": "DeleteResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.delete_cloudhub_alert",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "list_cloudhub_schedules",
+      "description": "List scheduled flow triggers configured on a CloudHub Mule application.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain whose schedules to list.",
+            "title": "Domain",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "title": "ListCloudhubSchedulesParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "CloudhubSchedule": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "enabled": {
+                "default": true,
+                "title": "Enabled",
+                "type": "boolean"
+              },
+              "flow_name": {
+                "default": "",
+                "title": "Flow Name",
+                "type": "string"
+              }
+            },
+            "title": "CloudhubSchedule",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "cloudhub_schedule_list",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/CloudhubSchedule"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "title": "CloudhubScheduleList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.list_cloudhub_schedules",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "set_cloudhub_schedule_enabled",
+      "description": "Enable or disable a scheduled flow trigger on a CloudHub Mule application.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.schedule.updated"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain the schedule belongs to.",
+            "title": "Domain",
+            "type": "string"
+          },
+          "schedule_id": {
+            "description": "Schedule id, from list_cloudhub_schedules.",
+            "title": "Schedule Id",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "True to enable, False to disable.",
+            "title": "Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "domain",
+          "schedule_id",
+          "enabled"
+        ],
+        "title": "SetCloudhubScheduleEnabledParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "title": "CloudhubActionResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.set_cloudhub_schedule_enabled",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "run_cloudhub_schedule",
+      "description": "Run a CloudHub application's scheduled flow trigger immediately, regardless of its schedule.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.schedule.run"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "CloudHub application domain the schedule belongs to.",
+            "title": "Domain",
+            "type": "string"
+          },
+          "schedule_id": {
+            "description": "Schedule id to run immediately, from list_cloudhub_schedules.",
+            "title": "Schedule Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain",
+          "schedule_id"
+        ],
+        "title": "RunCloudhubScheduleParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "title": "CloudhubActionResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.run_cloudhub_schedule",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "list_api_instances",
+      "description": "List API instances registered in API Manager for the connected organization/environment.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "search": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional API name substring filter.",
+            "title": "Search"
+          }
+        },
+        "title": "ListApiInstancesParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "ApiInstance": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "asset_id": {
+                "default": "",
+                "title": "Asset Id",
+                "type": "string"
+              },
+              "asset_version": {
+                "default": "",
+                "title": "Asset Version",
+                "type": "string"
+              },
+              "environment_id": {
+                "default": "",
+                "title": "Environment Id",
+                "type": "string"
+              },
+              "tracking_status": {
+                "default": "",
+                "title": "Tracking Status",
+                "type": "string"
+              },
+              "endpoint_uri": {
+                "default": "",
+                "title": "Endpoint Uri",
+                "type": "string"
+              }
+            },
+            "title": "ApiInstance",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "api_instance_list",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/ApiInstance"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "title": "ApiInstanceList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.list_api_instances",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "get_api_instance",
+      "description": "Read one API Manager instance in full.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "api_id": {
+            "description": "API instance id, from list_api_instances.",
+            "title": "Api Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "api_id"
+        ],
+        "title": "GetApiInstanceParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "asset_id": {
+            "default": "",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "asset_version": {
+            "default": "",
+            "title": "Asset Version",
+            "type": "string"
+          },
+          "environment_id": {
+            "default": "",
+            "title": "Environment Id",
+            "type": "string"
+          },
+          "tracking_status": {
+            "default": "",
+            "title": "Tracking Status",
+            "type": "string"
+          },
+          "endpoint_uri": {
+            "default": "",
+            "title": "Endpoint Uri",
+            "type": "string"
+          }
+        },
+        "title": "ApiInstance",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.get_api_instance",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "bulk_start_cloudhub_applications",
+      "description": "Start SEVERAL CloudHub Mule applications in one call, by explicit domains. Continues past individual failures and reports per-domain results.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.application.started"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domains": {
+            "description": "Explicit CloudHub application domains; 1-100, never inferred.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Domains",
+            "type": "array"
+          }
+        },
+        "required": [
+          "domains"
+        ],
+        "title": "BulkDomainsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "BulkAppResultItem": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "ok": {
+                "default": true,
+                "title": "Ok",
+                "type": "boolean"
+              },
+              "error": {
+                "default": "",
+                "title": "Error",
+                "type": "string"
+              }
+            },
+            "title": "BulkAppResultItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "bulk_app_result",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/BulkAppResultItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "succeeded": {
+            "default": 0,
+            "title": "Succeeded",
+            "type": "integer"
+          },
+          "failed": {
+            "default": 0,
+            "title": "Failed",
+            "type": "integer"
+          }
+        },
+        "title": "BulkAppResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.bulk_start_cloudhub_applications",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "bulk_stop_cloudhub_applications",
+      "description": "Stop SEVERAL CloudHub Mule applications in one call, by explicit domains. Continues past individual failures and reports per-domain results.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.application.stopped"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domains": {
+            "description": "Explicit CloudHub application domains; 1-100, never inferred.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Domains",
+            "type": "array"
+          }
+        },
+        "required": [
+          "domains"
+        ],
+        "title": "BulkDomainsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "BulkAppResultItem": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "ok": {
+                "default": true,
+                "title": "Ok",
+                "type": "boolean"
+              },
+              "error": {
+                "default": "",
+                "title": "Error",
+                "type": "string"
+              }
+            },
+            "title": "BulkAppResultItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "bulk_app_result",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/BulkAppResultItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "succeeded": {
+            "default": 0,
+            "title": "Succeeded",
+            "type": "integer"
+          },
+          "failed": {
+            "default": 0,
+            "title": "Failed",
+            "type": "integer"
+          }
+        },
+        "title": "BulkAppResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.bulk_stop_cloudhub_applications",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "bulk_restart_cloudhub_applications",
+      "description": "Restart SEVERAL CloudHub Mule applications in one call, by explicit domains. Continues past individual failures and reports per-domain results.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.application.restarted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domains": {
+            "description": "Explicit CloudHub application domains; 1-100, never inferred.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Domains",
+            "type": "array"
+          }
+        },
+        "required": [
+          "domains"
+        ],
+        "title": "BulkDomainsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "BulkAppResultItem": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "ok": {
+                "default": true,
+                "title": "Ok",
+                "type": "boolean"
+              },
+              "error": {
+                "default": "",
+                "title": "Error",
+                "type": "string"
+              }
+            },
+            "title": "BulkAppResultItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "bulk_app_result",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/BulkAppResultItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "succeeded": {
+            "default": 0,
+            "title": "Succeeded",
+            "type": "integer"
+          },
+          "failed": {
+            "default": 0,
+            "title": "Failed",
+            "type": "integer"
+          }
+        },
+        "title": "BulkAppResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.bulk_restart_cloudhub_applications",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "bulk_delete_cloudhub_applications",
+      "description": "Permanently delete SEVERAL CloudHub Mule applications in one call, by explicit domains. Cannot be undone. Continues past individual failures and reports per-domain results.",
+      "action_type": "destructive",
+      "chain_callable": true,
+      "effects": [
+        "mulesoft.application.deleted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "domains": {
+            "description": "Explicit CloudHub application domains; 1-100, never inferred.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Domains",
+            "type": "array"
+          }
+        },
+        "required": [
+          "domains"
+        ],
+        "title": "BulkDomainsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "BulkAppResultItem": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "ok": {
+                "default": true,
+                "title": "Ok",
+                "type": "boolean"
+              },
+              "error": {
+                "default": "",
+                "title": "Error",
+                "type": "string"
+              }
+            },
+            "title": "BulkAppResultItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "bulk_app_result",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/BulkAppResultItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "succeeded": {
+            "default": 0,
+            "title": "Succeeded",
+            "type": "integer"
+          },
+          "failed": {
+            "default": 0,
+            "title": "Failed",
+            "type": "integer"
+          }
+        },
+        "title": "BulkAppResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.bulk_delete_cloudhub_applications",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "audit_cloudhub_environment",
+      "description": "Build one aggregated health report across every CloudHub Mule application in the connected environment -- status, worker count, current vs. latest recommended Mule runtime version, and staleness -- in a single call instead of paging through list_cloudhub_applications by hand. This is a connector-native convenience, not a native Anypoint Platform report.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          }
+        },
+        "title": "AuditCloudhubEnvironmentParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "CloudhubAuditRow": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "default": "",
+                "title": "Status",
+                "type": "string"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "workers": {
+                "default": 0,
+                "title": "Workers",
+                "type": "integer"
+              },
+              "mule_version": {
+                "default": "",
+                "title": "Mule Version",
+                "type": "string"
+              },
+              "latest_mule_version": {
+                "default": "",
+                "title": "Latest Mule Version",
+                "type": "string"
+              },
+              "is_stale": {
+                "default": false,
+                "title": "Is Stale",
+                "type": "boolean"
+              },
+              "last_update_time": {
+                "default": "",
+                "title": "Last Update Time",
+                "type": "string"
+              }
+            },
+            "title": "CloudhubAuditRow",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "cloudhub_audit_report",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/CloudhubAuditRow"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "default": 0,
+            "title": "Total",
+            "type": "integer"
+          },
+          "stale_count": {
+            "default": 0,
+            "title": "Stale Count",
+            "type": "integer"
+          },
+          "stopped_count": {
+            "default": 0,
+            "title": "Stopped Count",
+            "type": "integer"
+          }
+        },
+        "title": "CloudhubAuditReport",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.audit_cloudhub_environment",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    },
+    {
+      "name": "get_stale_applications",
+      "description": "List only the CloudHub Mule applications running on an outdated Mule runtime version compared to Anypoint's own recommended upgrade -- a filtered view of audit_cloudhub_environment for teams that just want the upgrade backlog.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Which connected organization to use. Omit if only one is connected.",
+            "title": "Connection Id",
+            "type": "string"
+          }
+        },
+        "title": "GetStaleApplicationsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "CloudhubAuditRow": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "default": "",
+                "title": "Status",
+                "type": "string"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "workers": {
+                "default": 0,
+                "title": "Workers",
+                "type": "integer"
+              },
+              "mule_version": {
+                "default": "",
+                "title": "Mule Version",
+                "type": "string"
+              },
+              "latest_mule_version": {
+                "default": "",
+                "title": "Latest Mule Version",
+                "type": "string"
+              },
+              "is_stale": {
+                "default": false,
+                "title": "Is Stale",
+                "type": "boolean"
+              },
+              "last_update_time": {
+                "default": "",
+                "title": "Last Update Time",
+                "type": "string"
+              }
+            },
+            "title": "CloudhubAuditRow",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "cloudhub_audit_report",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/CloudhubAuditRow"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "default": 0,
+            "title": "Total",
+            "type": "integer"
+          },
+          "stale_count": {
+            "default": 0,
+            "title": "Stale Count",
+            "type": "integer"
+          },
+          "stopped_count": {
+            "default": 0,
+            "title": "Stopped Count",
+            "type": "integer"
+          }
+        },
+        "title": "CloudhubAuditReport",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "mulesoft-connector.get_stale_applications",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "mulesoft"
+    }
+  ],
+  "signals": [],
+  "schedules": [],
+  "required_scopes": [],
+  "icon_size_bytes": 295,
+  "lifecycle": {
+    "health_check": {
+      "interval_sec": 60
+    }
+  },
+  "secrets": [
+    {
+      "name": "mulesoft_connections",
+      "description": "Your connected Anypoint Platform organizations -- stored as a JSON array, one entry per organization/environment pair, each with its own Connected App (client_id, client_secret) and org_id/environment_id. Managed through connect_mulesoft / disconnect_mulesoft -- you should not need to edit this directly.",
+      "required": true,
+      "write_mode": "both",
+      "max_bytes": 65536,
+      "scope": "user",
+      "rotation_hint_days": 180
+    }
+  ],
+  "panels": [
+    {
+      "panel_id": "secrets",
+      "slot": "right",
+      "title": "Secrets",
+      "tree": {},
+      "icon": "KeyRound",
+      "refresh": "manual",
+      "center_overlay": false
+    },
+    {
+      "panel_id": "mulesoft_connect",
+      "slot": "left",
+      "title": "MuleSoft",
+      "tree": {},
+      "icon": "🔗",
+      "refresh": "manual",
+      "center_overlay": false,
+      "default_width": 320,
+      "min_width": 260,
+      "max_width": 420
+    },
+    {
+      "panel_id": "mulesoft_connect_help",
+      "slot": "center",
+      "title": "How to connect MuleSoft",
+      "tree": {},
+      "icon": "",
+      "refresh": "manual",
+      "center_overlay": true
+    },
+    {
+      "panel_id": "mulesoft_center",
+      "slot": "center",
+      "title": "MuleSoft",
+      "tree": {},
+      "icon": "🔗",
+      "refresh": "manual",
+      "center_overlay": true
+    },
+    {
+      "panel_id": "mulesoft_settings",
+      "slot": "center",
+      "title": "",
+      "tree": {},
+      "icon": "",
+      "refresh": "manual",
+      "center_overlay": false
+    }
+  ]
+}

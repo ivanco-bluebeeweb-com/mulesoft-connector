@@ -97,7 +97,7 @@ async def _get_token(ctx, conn: dict) -> dict:
 # ──────────────────────────────────────────────────────────────────────────
 
 
-@chat.tool(
+@chat.function(
     "connect_mulesoft",
     "Connect your Anypoint Platform organization by saving your Connected App's "
     "client_id/client_secret plus your organization ID and a default environment "
@@ -158,7 +158,7 @@ async def connect_mulesoft(ctx, params: ConnectMulesoftParams) -> ActionResult:
     return ActionResult.ok(_connection_to_entity(record))
 
 
-@chat.tool(
+@chat.function(
     "disconnect_mulesoft",
     "Disconnect one Anypoint Platform organization/environment. Nothing in "
     "Anypoint Platform is changed; the saved Connected App credentials are "
@@ -178,7 +178,7 @@ async def disconnect_mulesoft(ctx, params: DisconnectMulesoftParams) -> ActionRe
     return ActionResult.ok(DeleteResult(id=params.connection_id, title="disconnected", ok=True))
 
 
-@chat.tool(
+@chat.function(
     "list_connections",
     "List the connected Anypoint Platform organizations/environments.",
     action_type="read",
@@ -232,7 +232,7 @@ def _app_to_entity(a: dict) -> CloudhubApplication:
     )
 
 
-@chat.tool(
+@chat.function(
     "list_cloudhub_applications",
     "List CloudHub Mule applications in the connected organization/environment, with their status (STARTED/UNDEPLOYED/etc.).",
     action_type="read",
@@ -257,7 +257,7 @@ async def list_cloudhub_applications(ctx, params: ListCloudhubApplicationsParams
     ))
 
 
-@chat.tool(
+@chat.function(
     "get_cloudhub_application",
     "Read one CloudHub Mule application in full -- status, workers, Mule runtime version, region.",
     action_type="read",
@@ -276,7 +276,7 @@ async def get_cloudhub_application(ctx, params: GetCloudhubApplicationParams) ->
     return ActionResult.ok(_app_to_entity(app))
 
 
-@chat.tool(
+@chat.function(
     "start_cloudhub_application",
     "Start a stopped CloudHub Mule application.",
     action_type="write",
@@ -296,7 +296,7 @@ async def start_cloudhub_application(ctx, params: StartStopRestartParams) -> Act
     return ActionResult.ok(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="started"))
 
 
-@chat.tool(
+@chat.function(
     "stop_cloudhub_application",
     "Stop a running CloudHub Mule application.",
     action_type="write",
@@ -316,7 +316,7 @@ async def stop_cloudhub_application(ctx, params: StartStopRestartParams) -> Acti
     return ActionResult.ok(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="stopped"))
 
 
-@chat.tool(
+@chat.function(
     "restart_cloudhub_application",
     "Restart a CloudHub Mule application.",
     action_type="write",
@@ -336,7 +336,7 @@ async def restart_cloudhub_application(ctx, params: StartStopRestartParams) -> A
     return ActionResult.ok(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="restarted"))
 
 
-@chat.tool(
+@chat.function(
     "update_cloudhub_application",
     "Update a CloudHub Mule application's workers, worker size, or application properties.",
     action_type="write",
@@ -359,7 +359,7 @@ async def update_cloudhub_application(ctx, params: UpdateCloudhubApplicationPara
     return ActionResult.ok(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="updated"))
 
 
-@chat.tool(
+@chat.function(
     "delete_cloudhub_application",
     "Permanently delete (undeploy) a CloudHub Mule application. Cannot be undone.",
     action_type="destructive",
@@ -379,7 +379,7 @@ async def delete_cloudhub_application(ctx, params: DeleteCloudhubApplicationPara
     return ActionResult.ok(DeleteResult(id=params.domain, title=params.domain, ok=True))
 
 
-@chat.tool(
+@chat.function(
     "get_cloudhub_application_logs",
     "Read recent log lines for a CloudHub Mule application.",
     action_type="read",
@@ -411,7 +411,7 @@ async def get_cloudhub_application_logs(ctx, params: GetCloudhubApplicationLogsP
 # ──────────────────────────────────────────────────────────────────────────
 
 
-@chat.tool(
+@chat.function(
     "list_cloudhub_alerts",
     "List alerts configured on a CloudHub Mule application.",
     action_type="read",
@@ -438,7 +438,7 @@ async def list_cloudhub_alerts(ctx, params: ListCloudhubAlertsParams) -> ActionR
     return ActionResult.ok(CloudhubAlertList(title=f"{len(items)} alert(s)", items=items))
 
 
-@chat.tool(
+@chat.function(
     "create_cloudhub_alert",
     "Create a new alert watching a CloudHub Mule application (e.g. notify on application status changes or restarts).",
     action_type="write",
@@ -464,7 +464,7 @@ async def create_cloudhub_alert(ctx, params: CreateCloudhubAlertParams) -> Actio
     ))
 
 
-@chat.tool(
+@chat.function(
     "delete_cloudhub_alert",
     "Permanently delete a CloudHub application alert. Cannot be undone.",
     action_type="destructive",
@@ -496,7 +496,7 @@ async def delete_cloudhub_alert(ctx, params: DeleteCloudhubAlertParams) -> Actio
 # ──────────────────────────────────────────────────────────────────────────
 
 
-@chat.tool(
+@chat.function(
     "list_cloudhub_schedules",
     "List scheduled flow triggers configured on a CloudHub Mule application.",
     action_type="read",
@@ -522,7 +522,7 @@ async def list_cloudhub_schedules(ctx, params: ListCloudhubSchedulesParams) -> A
     return ActionResult.ok(CloudhubScheduleList(title=f"{len(items)} schedule(s)", items=items))
 
 
-@chat.tool(
+@chat.function(
     "set_cloudhub_schedule_enabled",
     "Enable or disable a scheduled flow trigger on a CloudHub Mule application.",
     action_type="write",
@@ -542,7 +542,7 @@ async def set_cloudhub_schedule_enabled(ctx, params: SetCloudhubScheduleEnabledP
     return ActionResult.ok(CloudhubActionResult(id=params.schedule_id, title=params.schedule_id, ok=True, detail="enabled" if params.enabled else "disabled"))
 
 
-@chat.tool(
+@chat.function(
     "run_cloudhub_schedule",
     "Run a CloudHub application's scheduled flow trigger immediately, regardless of its schedule.",
     action_type="write",
@@ -567,7 +567,7 @@ async def run_cloudhub_schedule(ctx, params: RunCloudhubScheduleParams) -> Actio
 # ──────────────────────────────────────────────────────────────────────────
 
 
-@chat.tool(
+@chat.function(
     "list_api_instances",
     "List API instances registered in API Manager for the connected organization/environment.",
     action_type="read",
@@ -598,7 +598,7 @@ async def list_api_instances(ctx, params: ListApiInstancesParams) -> ActionResul
     return ActionResult.ok(ApiInstanceList(title=f"{len(items)} API instance(s)", items=items))
 
 
-@chat.tool(
+@chat.function(
     "get_api_instance",
     "Read one API Manager instance in full.",
     action_type="read",
@@ -636,7 +636,7 @@ def _bulk_to_result(raw: list[dict], title: str) -> BulkAppResult:
     return BulkAppResult(title=title, items=items, succeeded=succeeded, failed=len(raw) - succeeded)
 
 
-@chat.tool(
+@chat.function(
     "bulk_start_cloudhub_applications",
     "Start SEVERAL CloudHub Mule applications in one call, by explicit domains. Continues past individual failures and reports per-domain results.",
     action_type="write",
@@ -653,7 +653,7 @@ async def bulk_start_cloudhub_applications(ctx, params: BulkDomainsParams) -> Ac
     return ActionResult.ok(_bulk_to_result(raw, "Bulk start"))
 
 
-@chat.tool(
+@chat.function(
     "bulk_stop_cloudhub_applications",
     "Stop SEVERAL CloudHub Mule applications in one call, by explicit domains. Continues past individual failures and reports per-domain results.",
     action_type="write",
@@ -670,7 +670,7 @@ async def bulk_stop_cloudhub_applications(ctx, params: BulkDomainsParams) -> Act
     return ActionResult.ok(_bulk_to_result(raw, "Bulk stop"))
 
 
-@chat.tool(
+@chat.function(
     "bulk_restart_cloudhub_applications",
     "Restart SEVERAL CloudHub Mule applications in one call, by explicit domains. Continues past individual failures and reports per-domain results.",
     action_type="write",
@@ -687,7 +687,7 @@ async def bulk_restart_cloudhub_applications(ctx, params: BulkDomainsParams) -> 
     return ActionResult.ok(_bulk_to_result(raw, "Bulk restart"))
 
 
-@chat.tool(
+@chat.function(
     "bulk_delete_cloudhub_applications",
     "Permanently delete SEVERAL CloudHub Mule applications in one call, by explicit domains. Cannot be undone. Continues past individual failures and reports per-domain results.",
     action_type="destructive",
@@ -704,7 +704,7 @@ async def bulk_delete_cloudhub_applications(ctx, params: BulkDomainsParams) -> A
     return ActionResult.ok(_bulk_to_result(raw, "Bulk delete"))
 
 
-@chat.tool(
+@chat.function(
     "audit_cloudhub_environment",
     "Build one aggregated health report across every CloudHub Mule application in the connected environment -- status, worker count, current vs. latest recommended Mule runtime version, and staleness -- in a single call instead of paging through list_cloudhub_applications by hand. This is a connector-native convenience, not a native Anypoint Platform report.",
     action_type="read",
@@ -747,7 +747,7 @@ async def audit_cloudhub_environment(ctx, params: AuditCloudhubEnvironmentParams
     ))
 
 
-@chat.tool(
+@chat.function(
     "get_stale_applications",
     "List only the CloudHub Mule applications running on an outdated Mule runtime version compared to Anypoint's own recommended upgrade -- a filtered view of audit_cloudhub_environment for teams that just want the upgrade backlog.",
     action_type="read",
