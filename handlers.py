@@ -170,6 +170,7 @@ async def connect_mulesoft(ctx, params: ConnectMulesoftParams) -> ActionResult:
     effects=["mulesoft.provider.disconnected"],
 )
 async def disconnect_mulesoft(ctx, params: DisconnectMulesoftParams) -> ActionResult:
+    """Disconnect one Anypoint Platform organization/environment."""
     connections = await _load_connections(ctx)
     remaining = [c for c in connections if c.get("id") != params.connection_id]
     if len(remaining) == len(connections):
@@ -187,6 +188,7 @@ async def disconnect_mulesoft(ctx, params: DisconnectMulesoftParams) -> ActionRe
     event="mulesoft-connector.list_connections",
 )
 async def list_connections(ctx, params: NoParams) -> ActionResult:
+    """List the connected Anypoint Platform organizations/environments."""
     connections = await _load_connections(ctx)
     return ActionResult.ok(ProviderConnectionList(
         title="MuleSoft connections",
@@ -241,6 +243,7 @@ def _app_to_entity(a: dict) -> CloudhubApplication:
     event="mulesoft-connector.list_cloudhub_applications",
 )
 async def list_cloudhub_applications(ctx, params: ListCloudhubApplicationsParams) -> ActionResult:
+    """List CloudHub Mule applications for the connected organization/environment."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -266,6 +269,7 @@ async def list_cloudhub_applications(ctx, params: ListCloudhubApplicationsParams
     event="mulesoft-connector.get_cloudhub_application",
 )
 async def get_cloudhub_application(ctx, params: GetCloudhubApplicationParams) -> ActionResult:
+    """Read one CloudHub Mule application in full."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -286,6 +290,7 @@ async def get_cloudhub_application(ctx, params: GetCloudhubApplicationParams) ->
     effects=["mulesoft.application.started"],
 )
 async def start_cloudhub_application(ctx, params: StartStopRestartParams) -> ActionResult:
+    """Start a stopped CloudHub Mule application."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -306,6 +311,7 @@ async def start_cloudhub_application(ctx, params: StartStopRestartParams) -> Act
     effects=["mulesoft.application.stopped"],
 )
 async def stop_cloudhub_application(ctx, params: StartStopRestartParams) -> ActionResult:
+    """Stop a running CloudHub Mule application."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -326,6 +332,7 @@ async def stop_cloudhub_application(ctx, params: StartStopRestartParams) -> Acti
     effects=["mulesoft.application.restarted"],
 )
 async def restart_cloudhub_application(ctx, params: StartStopRestartParams) -> ActionResult:
+    """Restart a CloudHub Mule application."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -346,6 +353,7 @@ async def restart_cloudhub_application(ctx, params: StartStopRestartParams) -> A
     effects=["mulesoft.application.updated"],
 )
 async def update_cloudhub_application(ctx, params: UpdateCloudhubApplicationParams) -> ActionResult:
+    """Update a CloudHub Mule application's workers/worker size/properties."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -369,6 +377,7 @@ async def update_cloudhub_application(ctx, params: UpdateCloudhubApplicationPara
     effects=["mulesoft.application.deleted"],
 )
 async def delete_cloudhub_application(ctx, params: DeleteCloudhubApplicationParams) -> ActionResult:
+    """Permanently delete (undeploy) a CloudHub Mule application."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -388,6 +397,7 @@ async def delete_cloudhub_application(ctx, params: DeleteCloudhubApplicationPara
     event="mulesoft-connector.get_cloudhub_application_logs",
 )
 async def get_cloudhub_application_logs(ctx, params: GetCloudhubApplicationLogsParams) -> ActionResult:
+    """Read recent log lines for a CloudHub Mule application."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -420,6 +430,7 @@ async def get_cloudhub_application_logs(ctx, params: GetCloudhubApplicationLogsP
     event="mulesoft-connector.list_cloudhub_alerts",
 )
 async def list_cloudhub_alerts(ctx, params: ListCloudhubAlertsParams) -> ActionResult:
+    """List alerts configured on a CloudHub Mule application."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -448,6 +459,7 @@ async def list_cloudhub_alerts(ctx, params: ListCloudhubAlertsParams) -> ActionR
     effects=["mulesoft.alert.created"],
 )
 async def create_cloudhub_alert(ctx, params: CreateCloudhubAlertParams) -> ActionResult:
+    """Create a new alert watching a CloudHub Mule application."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -474,6 +486,7 @@ async def create_cloudhub_alert(ctx, params: CreateCloudhubAlertParams) -> Actio
     effects=["mulesoft.alert.deleted"],
 )
 async def delete_cloudhub_alert(ctx, params: DeleteCloudhubAlertParams) -> ActionResult:
+    """Permanently delete a CloudHub application alert."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -505,6 +518,7 @@ async def delete_cloudhub_alert(ctx, params: DeleteCloudhubAlertParams) -> Actio
     event="mulesoft-connector.list_cloudhub_schedules",
 )
 async def list_cloudhub_schedules(ctx, params: ListCloudhubSchedulesParams) -> ActionResult:
+    """List scheduled flow triggers configured on a CloudHub Mule application."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -532,6 +546,7 @@ async def list_cloudhub_schedules(ctx, params: ListCloudhubSchedulesParams) -> A
     effects=["mulesoft.schedule.updated"],
 )
 async def set_cloudhub_schedule_enabled(ctx, params: SetCloudhubScheduleEnabledParams) -> ActionResult:
+    """Enable or disable a CloudHub application schedule."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -552,6 +567,7 @@ async def set_cloudhub_schedule_enabled(ctx, params: SetCloudhubScheduleEnabledP
     effects=["mulesoft.schedule.run"],
 )
 async def run_cloudhub_schedule(ctx, params: RunCloudhubScheduleParams) -> ActionResult:
+    """Force one CloudHub application schedule to run now."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -576,6 +592,7 @@ async def run_cloudhub_schedule(ctx, params: RunCloudhubScheduleParams) -> Actio
     event="mulesoft-connector.list_api_instances",
 )
 async def list_api_instances(ctx, params: ListApiInstancesParams) -> ActionResult:
+    """List API Manager instances for the connected organization/environment."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -607,6 +624,7 @@ async def list_api_instances(ctx, params: ListApiInstancesParams) -> ActionResul
     event="mulesoft-connector.get_api_instance",
 )
 async def get_api_instance(ctx, params: GetApiInstanceParams) -> ActionResult:
+    """Read one API Manager instance in full."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -646,6 +664,7 @@ def _bulk_to_result(raw: list[dict], title: str) -> BulkAppResult:
     effects=["mulesoft.application.started"],
 )
 async def bulk_start_cloudhub_applications(ctx, params: BulkDomainsParams) -> ActionResult:
+    """Start several CloudHub Mule applications in one call."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -663,6 +682,7 @@ async def bulk_start_cloudhub_applications(ctx, params: BulkDomainsParams) -> Ac
     effects=["mulesoft.application.stopped"],
 )
 async def bulk_stop_cloudhub_applications(ctx, params: BulkDomainsParams) -> ActionResult:
+    """Stop several CloudHub Mule applications in one call."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -680,6 +700,7 @@ async def bulk_stop_cloudhub_applications(ctx, params: BulkDomainsParams) -> Act
     effects=["mulesoft.application.restarted"],
 )
 async def bulk_restart_cloudhub_applications(ctx, params: BulkDomainsParams) -> ActionResult:
+    """Restart several CloudHub Mule applications in one call."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -697,6 +718,7 @@ async def bulk_restart_cloudhub_applications(ctx, params: BulkDomainsParams) -> 
     effects=["mulesoft.application.deleted"],
 )
 async def bulk_delete_cloudhub_applications(ctx, params: BulkDomainsParams) -> ActionResult:
+    """Permanently delete several CloudHub Mule applications in one call."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -713,6 +735,7 @@ async def bulk_delete_cloudhub_applications(ctx, params: BulkDomainsParams) -> A
     event="mulesoft-connector.audit_cloudhub_environment",
 )
 async def audit_cloudhub_environment(ctx, params: AuditCloudhubEnvironmentParams) -> ActionResult:
+    """Build an aggregated health report across the connected CloudHub environment."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
@@ -756,6 +779,7 @@ async def audit_cloudhub_environment(ctx, params: AuditCloudhubEnvironmentParams
     event="mulesoft-connector.get_stale_applications",
 )
 async def get_stale_applications(ctx, params: GetStaleApplicationsParams) -> ActionResult:
+    """List CloudHub applications running behind the latest recommended Mule runtime version."""
     conn, token, err = await _resolve_or_error(ctx, params.connection_id)
     if err:
         return err
