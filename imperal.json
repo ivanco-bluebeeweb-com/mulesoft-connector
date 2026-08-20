@@ -4167,7 +4167,7 @@
       "slot": "left",
       "title": "MuleSoft",
       "tree": {},
-      "icon": "🔗",
+      "icon": "\ud83d\udd17",
       "refresh": "manual",
       "center_overlay": false,
       "default_width": 320,
@@ -4188,7 +4188,7 @@
       "slot": "center",
       "title": "MuleSoft",
       "tree": {},
-      "icon": "🔗",
+      "icon": "\ud83d\udd17",
       "refresh": "manual",
       "center_overlay": true
     },
@@ -4201,5 +4201,43 @@
       "refresh": "manual",
       "center_overlay": false
     }
-  ]
+  ],
+  "pricing": {
+    "model": "per_action",
+    "currency": "tokens",
+    "monthly_price": 0,
+    "free_tools": [
+      "connect_mulesoft",
+      "disconnect_mulesoft",
+      "list_connections"
+    ],
+    "tool_prices": {
+      "connect_mulesoft": 0,
+      "disconnect_mulesoft": 0,
+      "list_connections": 0,
+      "list_cloudhub_applications": 8,
+      "get_cloudhub_application": 8,
+      "get_cloudhub_application_logs": 8,
+      "list_cloudhub_alerts": 8,
+      "list_cloudhub_schedules": 8,
+      "list_api_instances": 8,
+      "get_api_instance": 8,
+      "start_cloudhub_application": 16,
+      "stop_cloudhub_application": 16,
+      "restart_cloudhub_application": 16,
+      "update_cloudhub_application": 16,
+      "delete_cloudhub_application": 16,
+      "create_cloudhub_alert": 16,
+      "delete_cloudhub_alert": 16,
+      "set_cloudhub_schedule_enabled": 16,
+      "run_cloudhub_schedule": 20,
+      "audit_cloudhub_environment": 40,
+      "get_stale_applications": 40,
+      "bulk_start_cloudhub_applications": 60,
+      "bulk_stop_cloudhub_applications": 60,
+      "bulk_restart_cloudhub_applications": 60,
+      "bulk_delete_cloudhub_applications": 60
+    },
+    "notes": "Fixed platform scale {0,8,16,20,40,60} per canonical PRICING_POLICY.md. Not a Google-backed app, no x1.8 markup."
+  }
 }
