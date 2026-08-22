@@ -1,5 +1,15 @@
 # Pricing History — MuleSoft Connector
 
+## 2026-08-22 — повторное подтверждение цены (suspend → update_pricing → deploy → submit_for_review)
+
+Тот же паттерн, что и на Salesforce/Klaviyo/HubSpot/Webflow в этой же
+сессии: `suspend_app` (было live) → первый `update_pricing` вернул
+`'connect_mulesoft'/'disconnect_mulesoft'/'list_connections' unexpectedly
+still priced` (расхождение только по free_tools) → немедленный повтор с
+тем же payload прошёл без ошибки. Задокументировано как задача #2275.
+`deploy_app` (20/21, commit 48e67524) → `submit_for_review` →
+`pending_review`.
+
 Обязательный журнал: каждое выставление или изменение цен на функции этого
 приложения фиксируется здесь — что изменилось, почему, и на основании
 чего. Не переписывать прошлые записи — только дописывать новые сверху.
