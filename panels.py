@@ -155,6 +155,9 @@ async def mulesoft_connect_panel(ctx, **kwargs) -> object:
         ui.Text(f"CloudHub applications -- {first.get('label') or first.get('org_id', '')}", variant="subtitle"),
         _applications_section(apps),
         ui.Divider(),
+        ui.Button("View environment dashboard", variant="primary", size="sm", full_width=True,
+                  icon="LayoutDashboard", on_click=ui.Call("__panel__mulesoft_center")),
+        ui.Divider(),
         _settings_button(),
     ])
 
@@ -192,16 +195,92 @@ async def mulesoft_connect_help(ctx, **kwargs) -> object:
     )
 
 
+def _audit_row(a) -> dict:
+    return {
+        "domain": a.domain, "status": a.status,
+        "workers": str(a.workers),
+        "mule_version": a.mule_version or "—",
+        "stale": "Yes" if a.is_stale else "No",
+        "domain_id": a.domain,
+    }
+
+
 @ext.panel("mulesoft_center", slot="center", title="MuleSoft", icon="🔗", center_overlay=True)
-async def mulesoft_center_panel(ctx, **kwargs) -> object:
-    """Base center panel -- per UI_INTERFACE_STANDARD.md (2026-08-20).
-    This app has no list/detail content of its own to show in the center
-    by default (everything lives in the sidebar). MUST carry
-    center_overlay=True: per docs.imperal.io/en/concepts/panels, a plain
-    slot="center" panel is registered but the Panel app never fetches it
-    at session-init without that flag. Text is the shared canonical
-    wording -- must stay identical across every app in this situation."""
-    return ui.Empty(
-        message="Nothing to show here -- this app is managed entirely from the sidebar.",
-        icon="👈",
-    )
+async def mulesoft_center_panel(ctx, domain_id: str = "", **kwargs) -> object:
+    """Post-connect main screen: CloudHub environment health dashboard, or
+    an application detail when `domain_id` is passed (master-detail via
+    the same panel_id, per UI_COMPONENT_VOCABULARY.md §3)."""
+    connections = await h._load_connections(ctx)
+    if not connections:
+        return ui.Empty(
+            message="Connect an Anypoint Platform organization from the sidebar to see it here.",
+            icon="🔗",
+        )
+    if domain_id:
+        return await _application_detail(ctx, domain_id)
+    return await _environment_dashboard(ctx)
+
+
+async def _environment_dashboard(ctx) -> ui.UINode:
+    from schemas import AuditCloudhubEnvironmentParams
+    audit_result = await h.audit_cloudhub_environment(ctx, AuditCloudhubEnvironmentParams())
+    stats: list[ui.UINode] = []
+    rows: list[dict] = []
+    if audit_result.success and audit_result.data:
+        r = audit_result.data
+        stats = [
+            ui.Stat(label="Total applications", value=str(r.total)),
+            ui.Stat(label="Stale (outdated Mule)", value=str(r.stale_count)),
+            ui.Stat(label="Stopped", value=str(r.stopped_count)),
+        ]
+        rows = [_audit_row(item) for item in r.items]
+
+    body: list[ui.UINode] = []
+    if stats:
+        body.append(ui.Stats(stats=stats))
+    body.append(ui.Divider())
+    body.append(ui.Text("CloudHub applications", variant="subtitle"))
+    if rows:
+        columns = [
+            ui.DataColumn("domain", "Domain", sortable=True),
+            ui.DataColumn("status", "Status", sortable=True),
+            ui.DataColumn("workers", "Workers", sortable=False),
+            ui.DataColumn("mule_version", "Mule version", sortable=False),
+            ui.DataColumn("stale", "Stale?", sortable=True),
+        ]
+        body.append(ui.DataTable(
+            columns=columns, rows=rows,
+            on_row_click=ui.Call("__panel__mulesoft_center", domain_id=""),
+        ))
+    else:
+        body.append(ui.Empty(message="No CloudHub applications on this environment yet.", icon="🔗"))
+    return ui.Stack(direction="v", gap=3, align="stretch", children=body)
+
+
+async def _application_detail(ctx, domain_id: str) -> ui.UINode:
+    from schemas import GetCloudhubApplicationParams
+    result = await h.get_cloudhub_application(ctx, GetCloudhubApplicationParams(domain=domain_id))
+    if not result.success or not result.data:
+        return ui.Alert(title="Application not found", message=result.error or "Could not load this application.", type="error")
+    a = result.data
+    return ui.Stack(direction="v", gap=3, align="stretch", children=[
+        ui.Button("← Back to environment", variant="ghost", size="sm",
+                  on_click=ui.Call("__panel__mulesoft_center")),
+        ui.KeyValue(columns=2, items=[
+            {"key": "Domain", "value": a.domain},
+            {"key": "Status", "value": a.status},
+            {"key": "Workers", "value": str(a.workers)},
+            {"key": "Worker type", "value": a.worker_type or "—"},
+            {"key": "Mule version", "value": a.mule_version or "—"},
+            {"key": "Latest Mule version", "value": a.latest_mule_version or "—"},
+            {"key": "Region", "value": a.region or "—"},
+            {"key": "Last update", "value": a.last_update_time or "—"},
+        ]),
+        ui.Divider(),
+        ui.Stack(direction="h", gap=2, children=[
+            ui.Button("Restart", variant="secondary", size="sm",
+                      on_click=ui.Call("restart_cloudhub_application", {"domain": a.domain})),
+            ui.Button("Stop", variant="destructive", size="sm",
+                      on_click=ui.Call("stop_cloudhub_application", {"domain": a.domain})),
+        ]),
+    ])

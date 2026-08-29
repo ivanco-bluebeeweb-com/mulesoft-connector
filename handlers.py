@@ -83,13 +83,54 @@ def _connection_to_entity(c: dict) -> ProviderConnection:
     )
 
 
+_TOKEN_CACHE = "mulesoft_token_cache"
+
+
+async def _cached_token(ctx, conn_id: str) -> dict | None:
+    import time as _time
+    page = await ctx.store.query(_TOKEN_CACHE, where={"connection_id": conn_id}, limit=1)
+    if not page.data:
+        return None
+    doc = page.data[0].data
+    if int(doc.get("expires_at", 0)) <= int(_time.time()):
+        return None
+    return {"ok": True, "access_token": doc["access_token"]}
+
+
+async def _store_token(ctx, conn_id: str, access_token: str, expires_in: int) -> None:
+    import time as _time
+    page = await ctx.store.query(_TOKEN_CACHE, where={"connection_id": conn_id}, limit=1)
+    # 60s safety skew so a slow request that starts just under the wire still completes,
+    # same skew convention as imperal_sdk.oauth_tokens.DEFAULT_SKEW_SECONDS.
+    doc = {
+        "connection_id": conn_id,
+        "access_token": access_token,
+        "expires_at": int(_time.time()) + max(int(expires_in or 3600) - 60, 60),
+    }
+    if page.data:
+        await ctx.store.update(_TOKEN_CACHE, page.data[0].id, doc)
+    else:
+        await ctx.store.create(_TOKEN_CACHE, doc)
+
+
 async def _get_token(ctx, conn: dict) -> dict:
-    """Fetch a fresh access token for a stored connection. MuleSoft client-
-    credentials tokens are short-lived (default 3600s per Anypoint's own
-    OAuth2 token endpoint) -- no refresh-token dance needed, just request a
-    new one per call, same simplicity tradeoff as Power Automate Connector.
+    """Fetch an access token for a stored connection, reusing a cached one when
+    still fresh. MuleSoft's client-credentials token endpoint returns a real
+    expires_in (default 3600s), so the cache honors that TTL instead of
+    re-requesting a token on every single tool call -- see
+    AUTH_AND_CREDENTIALS_STANDARD.md Part B3 (repeated client-credentials token
+    requests risk hitting the token endpoint's own rate limit during bulk
+    operations). Cached in ctx.store, not ctx.secrets, since it's a derived
+    runtime artifact, not a user secret.
     """
-    return await mc.get_access_token(ctx, conn.get("client_id", ""), conn.get("client_secret", ""))
+    conn_id = conn.get("id", "")
+    cached = await _cached_token(ctx, conn_id) if conn_id else None
+    if cached:
+        return cached
+    tok = await mc.get_access_token(ctx, conn.get("client_id", ""), conn.get("client_secret", ""))
+    if tok.get("ok") and conn_id:
+        await _store_token(ctx, conn_id, tok["access_token"], tok.get("expires_in", 3600))
+    return tok
 
 
 # ──────────────────────────────────────────────────────────────────────────
