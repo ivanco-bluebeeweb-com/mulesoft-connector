@@ -237,7 +237,7 @@ async def _environment_dashboard(ctx) -> ui.UINode:
 
     body: list[ui.UINode] = []
     if stats:
-        body.append(ui.Stats(stats=stats))
+        body.append(ui.Stats(children=stats))
     body.append(ui.Divider())
     body.append(ui.Text("CloudHub applications", variant="subtitle"))
     if rows:
