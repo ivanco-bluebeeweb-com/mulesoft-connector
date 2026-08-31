@@ -196,7 +196,7 @@ async def connect_mulesoft(ctx, params: ConnectMulesoftParams) -> ActionResult:
         }
         connections.append(record)
     await _save_connections(ctx, connections)
-    return ActionResult.ok(_connection_to_entity(record))
+    return ActionResult.success(_connection_to_entity(record), summary="Mulesoft connected.")
 
 
 @chat.function(
@@ -217,7 +217,7 @@ async def disconnect_mulesoft(ctx, params: DisconnectMulesoftParams) -> ActionRe
     if len(remaining) == len(connections):
         return ActionResult.error("No such connection.", code="MULESOFT_NOT_FOUND")
     await _save_connections(ctx, remaining)
-    return ActionResult.ok(DeleteResult(id=params.connection_id, title="disconnected", ok=True))
+    return ActionResult.success(DeleteResult(id=params.connection_id, title="disconnected", ok=True), summary="Mulesoft disconnected.")
 
 
 @chat.function(
@@ -231,10 +231,10 @@ async def disconnect_mulesoft(ctx, params: DisconnectMulesoftParams) -> ActionRe
 async def list_connections(ctx, params: NoParams) -> ActionResult:
     """List the connected Anypoint Platform organizations/environments."""
     connections = await _load_connections(ctx)
-    return ActionResult.ok(ProviderConnectionList(
+    return ActionResult.success(ProviderConnectionList(
         title="MuleSoft connections",
         items=[_connection_to_entity(c) for c in connections],
-    ))
+    ), summary="Connections listed.")
 
 
 async def _resolve_or_error(ctx, connection_id: str = ""):
@@ -295,10 +295,10 @@ async def list_cloudhub_applications(ctx, params: ListCloudhubApplicationsParams
     if params.search:
         needle = params.search.lower()
         apps = [a for a in apps if needle in (a.get("domain", "").lower())]
-    return ActionResult.ok(CloudhubApplicationList(
+    return ActionResult.success(CloudhubApplicationList(
         title=f"{len(apps)} application(s)",
         items=[_app_to_entity(a) for a in apps],
-    ))
+    ), summary="Cloudhub applications listed.")
 
 
 @chat.function(
@@ -318,7 +318,7 @@ async def get_cloudhub_application(ctx, params: GetCloudhubApplicationParams) ->
         app = await mc.get_application(ctx, token, conn["org_id"], conn["environment_id"], params.domain)
     except mc.ClientFail as e:
         return ActionResult.error(e.payload.get("error"), code=e.payload.get("error_code"))
-    return ActionResult.ok(_app_to_entity(app))
+    return ActionResult.success(_app_to_entity(app), summary="Cloudhub application retrieved.")
 
 
 @chat.function(
@@ -339,7 +339,7 @@ async def start_cloudhub_application(ctx, params: StartStopRestartParams) -> Act
         await mc.start_application(ctx, token, conn["org_id"], conn["environment_id"], params.domain)
     except mc.ClientFail as e:
         return ActionResult.error(e.payload.get("error"), code=e.payload.get("error_code"))
-    return ActionResult.ok(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="started"))
+    return ActionResult.success(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="started"), summary="Cloudhub application start requested.")
 
 
 @chat.function(
@@ -360,7 +360,7 @@ async def stop_cloudhub_application(ctx, params: StartStopRestartParams) -> Acti
         await mc.stop_application(ctx, token, conn["org_id"], conn["environment_id"], params.domain)
     except mc.ClientFail as e:
         return ActionResult.error(e.payload.get("error"), code=e.payload.get("error_code"))
-    return ActionResult.ok(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="stopped"))
+    return ActionResult.success(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="stopped"), summary="Cloudhub application stop requested.")
 
 
 @chat.function(
@@ -381,7 +381,7 @@ async def restart_cloudhub_application(ctx, params: StartStopRestartParams) -> A
         await mc.restart_application(ctx, token, conn["org_id"], conn["environment_id"], params.domain)
     except mc.ClientFail as e:
         return ActionResult.error(e.payload.get("error"), code=e.payload.get("error_code"))
-    return ActionResult.ok(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="restarted"))
+    return ActionResult.success(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="restarted"), summary="Cloudhub application restart requested.")
 
 
 @chat.function(
@@ -405,7 +405,7 @@ async def update_cloudhub_application(ctx, params: UpdateCloudhubApplicationPara
         )
     except mc.ClientFail as e:
         return ActionResult.error(e.payload.get("error"), code=e.payload.get("error_code"))
-    return ActionResult.ok(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="updated"))
+    return ActionResult.success(CloudhubActionResult(id=params.domain, title=params.domain, ok=True, detail="updated"), summary="Cloudhub application updated.")
 
 
 @chat.function(
@@ -426,7 +426,7 @@ async def delete_cloudhub_application(ctx, params: DeleteCloudhubApplicationPara
         await mc.delete_application(ctx, token, conn["org_id"], conn["environment_id"], params.domain)
     except mc.ClientFail as e:
         return ActionResult.error(e.payload.get("error"), code=e.payload.get("error_code"))
-    return ActionResult.ok(DeleteResult(id=params.domain, title=params.domain, ok=True))
+    return ActionResult.success(DeleteResult(id=params.domain, title=params.domain, ok=True), summary="Cloudhub application deleted.")
 
 
 @chat.function(
@@ -454,7 +454,7 @@ async def get_cloudhub_application_logs(ctx, params: GetCloudhubApplicationLogsP
         )
         for i, l in enumerate(logs)
     ]
-    return ActionResult.ok(CloudhubLogList(title=f"{len(items)} log line(s)", items=items))
+    return ActionResult.success(CloudhubLogList(title=f"{len(items)} log line(s)", items=items), summary="Cloudhub application logs retrieved.")
 
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -487,7 +487,7 @@ async def list_cloudhub_alerts(ctx, params: ListCloudhubAlertsParams) -> ActionR
         )
         for a in alerts
     ]
-    return ActionResult.ok(CloudhubAlertList(title=f"{len(items)} alert(s)", items=items))
+    return ActionResult.success(CloudhubAlertList(title=f"{len(items)} alert(s)", items=items), summary="Cloudhub alerts listed.")
 
 
 @chat.function(
@@ -511,10 +511,10 @@ async def create_cloudhub_alert(ctx, params: CreateCloudhubAlertParams) -> Actio
         )
     except mc.ClientFail as e:
         return ActionResult.error(e.payload.get("error"), code=e.payload.get("error_code"))
-    return ActionResult.ok(CloudhubAlert(
+    return ActionResult.success(CloudhubAlert(
         id=str(alert.get("id", "")), title=params.name, domain=params.domain,
         enabled=params.enabled, watch=params.watch, condition="",
-    ))
+    ), summary="Cloudhub alert created.")
 
 
 @chat.function(
@@ -542,7 +542,7 @@ async def delete_cloudhub_alert(ctx, params: DeleteCloudhubAlertParams) -> Actio
         await mc.delete_alert(ctx, token, conn["org_id"], conn["environment_id"], domain, alert_id)
     except mc.ClientFail as e:
         return ActionResult.error(e.payload.get("error"), code=e.payload.get("error_code"))
-    return ActionResult.ok(DeleteResult(id=params.alert_id, title="deleted", ok=True))
+    return ActionResult.success(DeleteResult(id=params.alert_id, title="deleted", ok=True), summary="Cloudhub alert deleted.")
 
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -574,7 +574,7 @@ async def list_cloudhub_schedules(ctx, params: ListCloudhubSchedulesParams) -> A
         )
         for s in schedules
     ]
-    return ActionResult.ok(CloudhubScheduleList(title=f"{len(items)} schedule(s)", items=items))
+    return ActionResult.success(CloudhubScheduleList(title=f"{len(items)} schedule(s)", items=items), summary="Cloudhub schedules listed.")
 
 
 @chat.function(
@@ -595,7 +595,7 @@ async def set_cloudhub_schedule_enabled(ctx, params: SetCloudhubScheduleEnabledP
         await mc.set_schedule_enabled(ctx, token, conn["org_id"], conn["environment_id"], params.domain, params.schedule_id, params.enabled)
     except mc.ClientFail as e:
         return ActionResult.error(e.payload.get("error"), code=e.payload.get("error_code"))
-    return ActionResult.ok(CloudhubActionResult(id=params.schedule_id, title=params.schedule_id, ok=True, detail="enabled" if params.enabled else "disabled"))
+    return ActionResult.success(CloudhubActionResult(id=params.schedule_id, title=params.schedule_id, ok=True, detail="enabled" if params.enabled else "disabled"), summary="Cloudhub schedule enabled updated.")
 
 
 @chat.function(
@@ -616,7 +616,7 @@ async def run_cloudhub_schedule(ctx, params: RunCloudhubScheduleParams) -> Actio
         await mc.run_schedule(ctx, token, conn["org_id"], conn["environment_id"], params.domain, params.schedule_id)
     except mc.ClientFail as e:
         return ActionResult.error(e.payload.get("error"), code=e.payload.get("error_code"))
-    return ActionResult.ok(CloudhubActionResult(id=params.schedule_id, title=params.schedule_id, ok=True, detail="ran"))
+    return ActionResult.success(CloudhubActionResult(id=params.schedule_id, title=params.schedule_id, ok=True, detail="ran"), summary="Cloudhub schedule run requested.")
 
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -653,7 +653,7 @@ async def list_api_instances(ctx, params: ListApiInstancesParams) -> ActionResul
         )
         for a in apis
     ]
-    return ActionResult.ok(ApiInstanceList(title=f"{len(items)} API instance(s)", items=items))
+    return ActionResult.success(ApiInstanceList(title=f"{len(items)} API instance(s)", items=items), summary="Api instances listed.")
 
 
 @chat.function(
@@ -673,12 +673,12 @@ async def get_api_instance(ctx, params: GetApiInstanceParams) -> ActionResult:
         a = await mc.get_api_instance(ctx, token, conn["org_id"], conn["environment_id"], params.api_id)
     except mc.ClientFail as e:
         return ActionResult.error(e.payload.get("error"), code=e.payload.get("error_code"))
-    return ActionResult.ok(ApiInstance(
+    return ActionResult.success(ApiInstance(
         id=str(a.get("id", "")), title=str(a.get("assetId", "")),
         asset_id=str(a.get("assetId", "")), asset_version=str(a.get("assetVersion", "")),
         environment_id=conn["environment_id"], tracking_status=str(a.get("lastActiveDate") and "active" or "unregistered"),
         endpoint_uri=str((a.get("endpoint") or {}).get("uri", "")) if isinstance(a.get("endpoint"), dict) else "",
-    ))
+    ), summary="Api instance retrieved.")
 
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -710,7 +710,7 @@ async def bulk_start_cloudhub_applications(ctx, params: BulkDomainsParams) -> Ac
     if err:
         return err
     raw = await mc.bulk_set_application_status(ctx, token, conn["org_id"], conn["environment_id"], params.domains, "START")
-    return ActionResult.ok(_bulk_to_result(raw, "Bulk start"))
+    return ActionResult.success(_bulk_to_result(raw, "Bulk start"), summary="Bulk start cloudhub applications done.")
 
 
 @chat.function(
@@ -728,7 +728,7 @@ async def bulk_stop_cloudhub_applications(ctx, params: BulkDomainsParams) -> Act
     if err:
         return err
     raw = await mc.bulk_set_application_status(ctx, token, conn["org_id"], conn["environment_id"], params.domains, "STOP")
-    return ActionResult.ok(_bulk_to_result(raw, "Bulk stop"))
+    return ActionResult.success(_bulk_to_result(raw, "Bulk stop"), summary="Bulk stop cloudhub applications done.")
 
 
 @chat.function(
@@ -746,7 +746,7 @@ async def bulk_restart_cloudhub_applications(ctx, params: BulkDomainsParams) -> 
     if err:
         return err
     raw = await mc.bulk_set_application_status(ctx, token, conn["org_id"], conn["environment_id"], params.domains, "RESTART")
-    return ActionResult.ok(_bulk_to_result(raw, "Bulk restart"))
+    return ActionResult.success(_bulk_to_result(raw, "Bulk restart"), summary="Bulk restart cloudhub applications done.")
 
 
 @chat.function(
@@ -764,7 +764,7 @@ async def bulk_delete_cloudhub_applications(ctx, params: BulkDomainsParams) -> A
     if err:
         return err
     raw = await mc.bulk_delete_applications(ctx, token, conn["org_id"], conn["environment_id"], params.domains)
-    return ActionResult.ok(_bulk_to_result(raw, "Bulk delete"))
+    return ActionResult.success(_bulk_to_result(raw, "Bulk delete"), summary="Bulk delete cloudhub applications done.")
 
 
 @chat.function(
@@ -805,10 +805,10 @@ async def audit_cloudhub_environment(ctx, params: AuditCloudhubEnvironmentParams
             mule_version=current_v, latest_mule_version=latest_v, is_stale=is_stale,
             last_update_time=str(a.get("lastUpdateTime", "")),
         ))
-    return ActionResult.ok(CloudhubAuditReport(
+    return ActionResult.success(CloudhubAuditReport(
         title=f"CloudHub environment audit -- {len(rows)} application(s)",
         items=rows, total=len(rows), stale_count=stale_count, stopped_count=stopped_count,
-    ))
+    ), summary="Cloudhub environment audit ready.")
 
 
 @chat.function(
@@ -842,7 +842,7 @@ async def get_stale_applications(ctx, params: GetStaleApplicationsParams) -> Act
                 mule_version=current_v, latest_mule_version=latest_v, is_stale=True,
                 last_update_time=str(a.get("lastUpdateTime", "")),
             ))
-    return ActionResult.ok(CloudhubAuditReport(
+    return ActionResult.success(CloudhubAuditReport(
         title=f"{len(rows)} stale application(s)",
         items=rows, total=len(rows), stale_count=len(rows), stopped_count=0,
-    ))
+    ), summary="Stale applications retrieved.")
