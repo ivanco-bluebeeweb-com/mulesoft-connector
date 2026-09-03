@@ -33,8 +33,7 @@ def _settings_button() -> ui.UINode:
     """The one required secondary entry point into the settings screen --
     always the last element at the bottom of the sidebar."""
     return ui.Button(
-        "App settings", variant="secondary", size="sm", full_width=True,
-        icon="settings", on_click=ui.Call("__panel__mulesoft_settings"),
+        "App settings", variant="secondary", size="sm", icon="settings", on_click=ui.Call("__panel__mulesoft_settings"),
     )
 
 
@@ -88,6 +87,9 @@ def _connect_section() -> ui.UINode:
         ui.Button("How do I set this up?", variant="ghost", size="sm",
                   icon="HelpCircle",
                   on_click=ui.Call("__panel__mulesoft_connect_help")),
+        ui.Button("Sign in with Anypoint Platform (SSO)", variant="primary", size="sm", icon="login"),
+        ui.Divider(),
+        ui.Text("Or connect via Connected App Client Credentials", variant="caption"),
         ui.Form(
             action="connect_mulesoft",
             submit_label="Verify and connect",
@@ -155,8 +157,7 @@ async def mulesoft_connect_panel(ctx, **kwargs) -> object:
         ui.Text(f"CloudHub applications -- {first.get('label') or first.get('org_id', '')}", variant="subtitle"),
         _applications_section(apps),
         ui.Divider(),
-        ui.Button("View environment dashboard", variant="primary", size="sm", full_width=True,
-                  icon="LayoutDashboard", on_click=ui.Call("__panel__mulesoft_center")),
+        ui.Button("View environment dashboard", variant="primary", size="sm", icon="LayoutDashboard", on_click=ui.Call("__panel__mulesoft_center")),
         ui.Divider(),
         _settings_button(),
     ])
